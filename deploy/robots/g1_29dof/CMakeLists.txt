@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 project(g1_29dof_controller)
 
+set(CMAKE_CXX_STANDARD 17)
+
 find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(yaml-cpp REQUIRED)
 
@@ -9,7 +11,6 @@ include_directories(
   /usr/local/include/ddscxx # dds
   /usr/local/include/iceoryx/v2.0.2 # dds
   include
-  ${PROJECT_SOURCE_DIR}/../../thirdparty/ocs2/include
   ${PROJECT_SOURCE_DIR}/../../thirdparty/onnxruntime-linux-x64-1.22.0/include
   ${PROJECT_SOURCE_DIR}/../../include/
 )

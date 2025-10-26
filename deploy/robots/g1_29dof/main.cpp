@@ -2,6 +2,7 @@
 #include "FSM/State_Passive.h"
 #include "FSM/State_FixStand.h"
 #include "FSM/State_RLBase.h"
+#include "State_Mimic.h"
 
 std::unique_ptr<LowCmd_t> FSMState::lowcmd = nullptr;
 std::shared_ptr<LowState_t> FSMState::lowstate = nullptr;
@@ -38,6 +39,10 @@ int main(int argc, char** argv)
     init_fsm_state();
 
     FSMState::lowcmd->msg_.mode_machine() = 5; // 29dof
+    if(!FSMState::lowcmd->check_mode_machine(FSMState::lowstate)) {
+        spdlog::critical("Unmatched robot type.");
+        exit(-1);
+    }
     
     // Initialize FSM
     auto & joy = FSMState::lowstate->joystick;
@@ -56,6 +61,22 @@ int main(int argc, char** argv)
         )
     );
     fsm->add(new State_RLBase(FSMMode::Velocity, "Velocity"));
+    fsm->states.back()->registered_checks.emplace_back(
+        std::make_pair(
+            // L2(2s) + down, avoid mis-operation
+            [&]()->bool{ return joy.LT.pressed && joy.LT.pressed_time > 2.0 && joy.down.on_pressed; },
+            FSMMode::Mimic_Dance_102
+        )
+    );
+    fsm->states.back()->registered_checks.emplace_back(
+        std::make_pair(
+            // L2(2s) + left, avoid mis-operation
+            [&]()->bool{ return joy.LT.pressed && joy.LT.pressed_time > 2.0 && joy.left.on_pressed; },
+            FSMMode::Mimic_Gangnam_Style
+        )
+    );
+    fsm->add(new State_Mimic(FSMMode::Mimic_Dance_102, "Mimic_Dance_102"));
+    fsm->add(new State_Mimic(FSMMode::Mimic_Gangnam_Style, "Mimic_Gangnam_Style"));
 
     std::cout << "Press [L2 + Up] to enter FixStand mode.\n";
     std::cout << "And then press [R1 + X] to start controlling the robot.\n";
