@@ -385,11 +385,6 @@ class RobotEnvCfg(ManagerBasedRLEnvCfg):
         self.sim.render_interval = self.decimation
         # self.sim.physics_material = self.scene.terrain.physics_material
         # self.sim.physx.gpu_max_rigid_patch_count = 10 * 2**15
-        self.sim.newton_cfg.solver_cfg.nefc_per_env = 80
-        self.sim.newton_cfg.solver_cfg.ls_iterations = 15
-        self.sim.newton_cfg.solver_cfg.cone = "elliptic"
-        self.sim.newton_cfg.solver_cfg.impratio = 100.0
-        self.sim.newton_cfg.solver_cfg.ls_parallel = True
 
         # update sensor update periods
         # we tick all the sensors based on the smallest update period (physics update period)
@@ -398,12 +393,12 @@ class RobotEnvCfg(ManagerBasedRLEnvCfg):
 
         # check if terrain levels curriculum is enabled - if so, enable curriculum for terrain generator
         # this generates terrains with increasing difficulty and is useful for training
-        # if getattr(self.curriculum, "terrain_levels", None) is not None:
-        #     if self.scene.terrain.terrain_generator is not None:
-        #         self.scene.terrain.terrain_generator.curriculum = True
-        # else:
-        #     if self.scene.terrain.terrain_generator is not None:
-        #         self.scene.terrain.terrain_generator.curriculum = False
+        if getattr(self.curriculum, "terrain_levels", None) is not None:
+            if self.scene.terrain.terrain_generator is not None:
+                self.scene.terrain.terrain_generator.curriculum = True
+        else:
+            if self.scene.terrain.terrain_generator is not None:
+                self.scene.terrain.terrain_generator.curriculum = False
 
 
 @configclass
