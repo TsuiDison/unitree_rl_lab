@@ -1,0 +1,6 @@
+python scripts/rsl_rl/train.py --task Unitree-G1-29dof-Velocity --headless --num_envs 4096 --seed 0 --max_iterations 1000
+
+同一个是实验用于对比的一定要用相同的seed才能比较是否参数调优了。
+
+继续某一个模型训练  --resume
+python scripts/rsl_rl/play.py --task Unitree-G1-29dof-Velocity --num_envs 16  --checkpoint ~/Desktop/Codes/unitree/IsaacLab/logs/rsl_rl/g1_flat/2025-08-20_08-22-31/model_900.pt

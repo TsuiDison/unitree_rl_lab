@@ -73,3 +73,5 @@ datasets
 
 # Mimic
 *.npz
+
+result/
